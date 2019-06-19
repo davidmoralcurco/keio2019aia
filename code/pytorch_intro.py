@@ -15,3 +15,7 @@ x1[:, 1] += 1
 print(x1)
 
 #%%
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
+
+#%%
