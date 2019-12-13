@@ -37,80 +37,118 @@ class Cat_Model:
 
     def __init__(self, dimension=None, weights=None, bias=None, activation=(lambda x: x), predict=None):
 
-        pass
+        self.dim = dimension
+        self.w = weights or np.random.normal(size=self._dim)
+        self.w = np.array(self.w)
+        self.b = bias if bias is not None else np.random.normal()
+        self._a = activation
+        self.predict = predict.__get__(self)
 
     def __str__(self):
-        '''
-        display the model's information
-        '''
-        info = ""
-        return info
+       
+        return "Simple cell neuron\n\
+        \tInput dimension: d\n\
+        \tBias: f\n\
+        \tWeights: s\n\
+        \tActivation: s"  (self._dim, self.b, self.w, self._a.__name__)
 
     def __call__(self, x):
-        '''
-        return the output of the network
-        '''
-        yhat = None
+       
+        yhat = self._a(np.dot(self.w, np.reshape(x, x.size)) + self.b)
         return yhat
 
     def load_model(self, file_path):
-        '''
-        open the pickle file and update the model's parameters
-        '''
-        pass
+        
+        with open(file_path, mode='rb') as f:
+            = pkl.load(f)
+            
+        self._dim = .dim
+        self.w = .w
+        self.b = .b
+        self._a = ._a
 
     def save_model(self):
-        '''
-        save your model as 'cat_model.pkl' in the local path
-        '''
-        pass
+        
+        f = open('cat_model.pkl','wb')
+        pkl.dump(self, f)
+        f.close
 
 class Cat_Trainer:
 
     def __init__(self, dataset, model):
 
-        pass
+        self.dataset = dataset
+        self.model = model
+        self.loss = lrloss
 
     def accuracy(self, data):
-        '''
-        return the accuracy on data given data iterator
-        '''
-        acc = None
-        return acc
+        
+        return 100*np.mean([1 if self.model.predict(x) == y else 0 for x, y in self.dataset.samples])
 
     def train(self, lr, ne):
-        '''
-        This method should:
-        1. display initial accuracy on the training data loaded in the constructor
-        2. update parameters of the model instance in a loop for ne epochs using lr learning rate
-        3. display final accuracy
-        '''
-
+       
+        print(lr)
+        
+        print("training model on data...")
+        accuracy = self.accuracy(self.dataset)
+        print(*initial accuracy: 0.3f" 0 (accuracy))
+              
+        costs = []
+        accuracies = []
+              
+        for epoch in range(1, ne+1):
+              self.dataset.shuffle()
+              J = 0
+              dw = 0
+              for d in self.dataset.samples:
+                  xi, yi = d
+                  yhat = self.model(xi)
+                  J += self.loss(yhat, yi)
+                  dz = yhat - yi
+                  dw += xi*dz
+              J /= len(self.dataset.samples)
+              dw /= len(self.dataset.samples)
+              self.model.w = self.model.w - lr*dw
+              
+              accuracy = self.accuracy(self.dataset)
+              
+              if epoch10 == 0:
+                  print('--> epoch=d, accuracy=,3f'  (epoch, accuracy))
+              costs.append(J)
+              accuracies.append(accuracy)
+              
+          print("training complete")
+          print("final accuracy: .3f' (self.accuracy(self.dataset)))
+          costs = list(map(lambda t: np.mean(t), [np.array(costs)[i-10:i+11] for i in range(1, len(costs)-10)]))
+          accuracies = list(map(lambda t: np.mean(t), [np.array(accuracies)[i-10:i+11] for i in range(1, len(accuracy
+                                                                                                             
+          return (costs, accuracies)                                                                                              
+                            
 class Cat_Data:
 
     def __init__(self, relative_path='../../data/assignment1/', data_file_name='cat_data.pkl'):
-        '''
-        initialize self.index; load and preprocess data; shuffle the iterator
-        '''
-        pass
-
+        
+        self.index = -1
+        with open('%s%s'  (data_file_path, data_file_name), mode='rb') as f:
+            cat_data = pkl.load(f)                                                                                                 
+        self.samples = [(np.reshape(vector, vector.size), 1) for vector in cat_data['train']['cat'] + [(np.res
+        random-shuffle(self.samples)
+                                                                                                       
     def __iter__(self):
-        '''
-        See example code (ngram) in lecture slides
-        '''
+       
         return self
 
     def __next__(self):
-        '''
-        See example code (ngram) in slides
-        '''
-        return
+        
+        self.index += 1
+        if self.index == len(self.samples):
+            raise StopIteration
+        return self.samples[self.index][0], self.samples[self.index][1]                                                                                                
+                                                                                                        
 
     def _shuffle(self):
-        '''
-        shuffle the data iterator
-        '''
-        pass
+        
+        random.shuffle(self.samples)                                                                                                
 
 def main():
 
